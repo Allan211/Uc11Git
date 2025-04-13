@@ -1,3 +1,9 @@
+
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
@@ -140,16 +146,36 @@ public class cadastroVIEW extends javax.swing.JFrame {
     }//GEN-LAST:event_cadastroNomeActionPerformed
 
     private void btnCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarActionPerformed
-        ProdutosDTO produto = new ProdutosDTO();
-        String nome = cadastroNome.getText();
-        String valor = cadastroValor.getText();
+ProdutosDTO produto = new ProdutosDTO();
+    String nome = cadastroNome.getText();
+    String valorStr = cadastroValor.getText();
+    
+        if (nome.isEmpty()) {
+        JOptionPane.showMessageDialog(rootPane, "O campo 'Nome' não pode estar vazio.");
+        return; // Para sair do método e não tentar converter um valor vazio para inteiro
+    }
+        
+    if (valorStr.isEmpty()) {
+        JOptionPane.showMessageDialog(rootPane, "O campo 'Valor' não pode estar vazio.");
+        return; // Para sair do método e não tentar converter um valor vazio para inteiro
+    }
+    
+    try {
+        int valor = Integer.parseInt(valorStr);
         String status = "A Venda";
         produto.setNome(nome);
-        produto.setValor(Integer.parseInt(valor));
+        produto.setValor(valor);
         produto.setStatus(status);
-        
+
         ProdutosDAO produtodao = new ProdutosDAO();
         produtodao.cadastrarProduto(produto);
+        JOptionPane.showMessageDialog(rootPane, "Dados inseridos com sucesso!");
+    } catch (NumberFormatException ex) {
+        JOptionPane.showMessageDialog(rootPane, "Erro ao inserir dados: Valor inválido.");
+    }   catch (SQLException ex) {
+            Logger.getLogger(cadastroVIEW.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
         
     }//GEN-LAST:event_btnCadastrarActionPerformed
 

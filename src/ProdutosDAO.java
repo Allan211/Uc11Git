@@ -12,21 +12,28 @@ import java.sql.PreparedStatement;
 import java.sql.Connection;
 import javax.swing.JOptionPane;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 
 public class ProdutosDAO {
+    conectaDAO conexao = new conectaDAO();
     
-    Connection conn;
-    PreparedStatement prep;
-    ResultSet resultset;
     ArrayList<ProdutosDTO> listagem = new ArrayList<>();
     
-    public void cadastrarProduto (ProdutosDTO produto){
+    public void cadastrarProduto (ProdutosDTO produto) throws SQLException {
+        conexao.conectar();
         
+        String nome = produto.getNome();
+        int valor = produto.getValor();
+        String status = produto.getStatus();
         
-        //conn = new conectaDAO().connectDB();
-        
+        Statement stmt = conexao.conn.createStatement();
+        String sql;                
+        sql = "insert into produtos (nome, valor, status) values ('" + nome + "', '" + valor + "', '" + status + "')";
+        stmt.executeUpdate(sql);
+        System.out.println("Dados inseridos.");
         
     }
     
