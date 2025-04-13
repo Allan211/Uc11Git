@@ -78,6 +78,7 @@ public class ProdutosDAO {
         pstmt.executeUpdate();
         
         System.out.println("Produto vendido.");
-    }    
+    } 
+  
     
 }
