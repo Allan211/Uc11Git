@@ -1,5 +1,9 @@
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 public class listagemVIEW extends javax.swing.JFrame {
@@ -120,12 +124,24 @@ public class listagemVIEW extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnVenderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVenderActionPerformed
-        String id = id_produto_venda.getText();
+         String id = id_produto_venda.getText();
         
-        ProdutosDAO produtosdao = new ProdutosDAO();
-        
-        //produtosdao.venderProduto(Integer.parseInt(id));
-        listarProdutos();
+        if (contemApenasNumeros(id)) {
+            if(!produtoJaVendido(id)) {
+                ProdutosDAO produtosdao = new ProdutosDAO();
+
+                try {
+                    produtosdao.venderProduto(Integer.valueOf(id));
+                    JOptionPane.showMessageDialog(rootPane, "Produto vendido com sucesso!");
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(rootPane, "Erro ao inserir dados: " + ex.getMessage());
+                }
+
+                listarProdutos();   
+            }
+        }
+        else JOptionPane.showMessageDialog(rootPane, "Erro! ID deve conter apenas um número inteiro");
+
     }//GEN-LAST:event_btnVenderActionPerformed
 
     private void btnVendasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVendasActionPerformed
@@ -212,5 +228,27 @@ public class listagemVIEW extends javax.swing.JFrame {
 
         return str.matches("[0-9]+");
     }
-    
+
+public boolean produtoJaVendido(String id) {
+    try {
+        conexao.conectar();
+        
+        String sql = "SELECT status FROM produtos WHERE id = ?";
+        PreparedStatement pstmt = conexao.conn.prepareStatement(sql);
+
+        pstmt.setInt(1, Integer.parseInt(id));
+        
+        ResultSet rs = pstmt.executeQuery();
+
+        if (rs.next()) return rs.getString("status").equals("Vendido");
+        else return false; 
+        
+    } catch(SQLException ex) {
+        JOptionPane.showMessageDialog(rootPane, "Erro ao inserir dados: " + ex.getMessage());
+        return false; // Adicionando um retorno padrão
+    }
 }
+
+}
+    
+
